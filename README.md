@@ -42,6 +42,13 @@ You can generate a sample configuration file using:
 ```
 bitshares-pricefeed create
 ```
+
+If you use docker:
+
+```
+docker run -it --rm -v /path/to:/app bitshares-pricefeed:latest bitshares-pricefeed create
+```
+
 Or copy one from the `examples` directory:
 
 File | Description
@@ -67,7 +74,7 @@ producer: your_witness_name
 IF you use docker image you can run:
 
 ```
-docker run -v /path/to/config.yml:/config/config.yml bitshares-pricefeed update --active-key=XXXXXXX
+docker run -v /path/to/config.yml:/config/config.yml bitshares-pricefeed:latest bitshares-pricefeed --configfile /config/config.yml --node wss://ws.gdex.top update --active-key=XXXXXXX
 ```
 
 If you installed bitshares-pricefeed locally use:
