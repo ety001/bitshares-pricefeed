@@ -32,8 +32,9 @@ class Feed(object):
     feed = {}
     price_result = {}
 
-    def __init__(self, config):
+    def __init__(self, config, dry_run):
         self.config = config
+        self.dry_run = dry_run
         self.reset()
         self.get_witness_activeness()
         self.getProducer()
@@ -145,6 +146,28 @@ class Feed(object):
             price = price_threshold
 
         return price
+
+    # See BAIP-2: https://github.com/bitshares/baips/blob/master/baip-0002.md
+    def loopholes_protection(self, symbol, price, asset):
+        loopholes_protection_days = self.assetconf(symbol, "loopholes_protection_days", no_fail=True)
+
+        if loopholes_protection_days:
+            from . import history
+            history_config = self.config["history"]
+            klass = getattr(history, history_config['klass'])
+            history_feed = klass(**history_config)
+            historical_prices = history_feed.load(symbol, loopholes_protection_days)
+            if not self.dry_run:
+                history_feed.save(symbol, price) 
+            historical_prices.append(price)
+            moving_average = statistics.mean(historical_prices)
+            print('{} {}d moving average is {} ({} feeds used).'.format(symbol, loopholes_protection_days, moving_average, len(historical_prices)))
+            if price < moving_average:
+                print('WARN: {} computed price ({}) is below {}d moving average ({}), average price will be used.'.format(symbol, price, loopholes_protection_days, moving_average))
+                price = moving_average
+
+        return price
+
 
     def get_cer(self, symbol, price, asset):
         if self.assethasconf(symbol, "core_exchange_rate"):
@@ -594,9 +617,11 @@ class Feed(object):
 
         (premium, target_price, details) = self.compute_target_price(symbol, backing_symbol, p, asset)
 
-        target_price = self.protect_against_global_settlement(symbol, target_price, asset)
+        target_price = self.loopholes_protection(symbol, target_price, asset)
 
         target_price = self.ensure_threshold(symbol, target_price, asset)
+
+        target_price = self.protect_against_global_settlement(symbol, target_price, asset)
 
         cer = self.get_cer(symbol, target_price, asset)
 
