@@ -40,7 +40,6 @@ setup(
         "click",
         "colorama",
         "tqdm",
-        "pyyaml",
         "quandl",
     ],
     extras_require = {
