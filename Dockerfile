@@ -5,7 +5,6 @@ ADD . /app/src
 
 RUN apk add --no-cache python3 python3-dev openssl-dev build-base libffi-dev && \
     pip3 install cython numpy pyyaml && \
-    pip3 install .[history_db_postgresql] && \
     cd /app/src && python3 setup.py install && \
     cp -r /app/src/examples /usr/lib/python3.6/site-packages/bitshares_pricefeed-0.0.10-py3.6.egg/bitshares_pricefeed/ && \
     cd && rm -rf /app/src && \ 
