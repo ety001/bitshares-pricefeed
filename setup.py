@@ -41,7 +41,8 @@ setup(
         "colorama",
         "tqdm",
         "pyyaml",
-        "quandl"
+        "quandl",
+        "PyYAML"
     ],
     extras_require = {
         'history_db_postgresql':  ["SQLAlchemy", "py-postgresql"]
