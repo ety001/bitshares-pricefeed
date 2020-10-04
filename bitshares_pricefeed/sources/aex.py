@@ -5,7 +5,7 @@ from . import FeedSource, _request_headers
 class Aex(FeedSource):
     def _fetch(self):
         feed = {}
-        url = "https://api.aex.com/ticker.php"
+        url = "https://api.aex.com/v3/ticker.php"
         for base in self.bases:
             for quote in self.quotes:
                 if base == quote:
