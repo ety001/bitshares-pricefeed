@@ -13,6 +13,7 @@ class Aex(FeedSource):
                 params = {'c': quote.lower(), 'mk_type': base.lower()}
                 response = requests.get(url=url, params=params, headers=_request_headers, timeout=self.timeout, verify=False)
                 result = response.json()
+                result = result['data']
                 if result != None and \
                     "ticker" in result and \
                     "last" in result["ticker"] and \
